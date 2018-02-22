@@ -1,0 +1,29 @@
+{
+  "name": "tokenairdrop",
+  "version": "1.0.0",
+  "description": "none",
+  "main": "truffle.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dadaista/TokenAirdrop.git"
+  },
+  "author": "dadabit",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dadaista/TokenAirdrop/issues"
+  },
+  "homepage": "https://github.com/dadaista/TokenAirdrop#readme",
+  "dependencies": {
+    "truffle-hdwallet-provider": "0.0.3",
+    "zeppelin-solidity": "^1.7.0",
+    "chai": "^4.0.2",
+    "chai-as-promised": "^7.0.0",
+    "chai-bignumber": "^2.0.0"
+  }
+}
