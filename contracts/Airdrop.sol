@@ -1,11 +1,11 @@
 pragma solidity ^0.4.17;
 
 
-import "zeppelin-solidity/contracts/token/ERC20/ERC20Basic.sol";
 
+import "./Token.sol";
 
 contract Airdrop{
-	ERC20Basic public token;
+	Token public token;
   address owner;
   //check this counter to know how many recipients got the Airdrop
   uint256 public counter;
@@ -13,7 +13,7 @@ contract Airdrop{
 
 	function Airdrop(address _token) public{
 		require(_token != address(0));
-		token = ERC20Basic(_token);
+		token = Token(_token);
     owner = msg.sender;
 	}
 

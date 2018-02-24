@@ -11,7 +11,7 @@ const ether      = 1e18 * wei;
 
  
 
-const MyToken = artifacts.require('./MyToken.sol');
+const MyToken = artifacts.require('./TokenImpl.sol');
 const Airdrop     = artifacts.require('./Airdrop.sol');
 contract('Airdrop', function ([owner, other]) {
 
