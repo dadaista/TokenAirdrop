@@ -33,6 +33,15 @@ contract Airdrop{
       counter ++;
     }
   }
+
+  /*
+  this function gives remaining tokens back to owner
+  */
+  function getRemainder(){
+    require(msg.sender == owner);
+    token.transfer(owner, token.balanceOf(this));
+  }
+  
     
 
 }

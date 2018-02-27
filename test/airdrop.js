@@ -108,8 +108,37 @@ contract('Airdrop', function ([owner, other]) {
     let remainder = await this.token.balanceOf(this.airdrop.address);
     console.log(remainder+"");
 
+  });
+
+  it('the remainder should go back to owner', async function () {
+    
+    let addr     = ["0x0000000000000000000000000000000000000001"];
+
+    let balances = [1e18];
+
+    let ownerBalance = await this.token.balanceOf(owner);
+
+    console.log("ownerBalance before airdrop: "+ownerBalance);
+
+    await this.airdrop.doAirdrop(addr, balances).should.be.fulfilled;
 
 
+
+    let remainder = await this.token.balanceOf(this.airdrop.address);
+    console.log("remainder is" +remainder);
+
+    await this.airdrop.getRemainder().should.be.fulfilled;
+
+    (await this.token.balanceOf(owner)).should.be.bignumber.equal(remainder.add(ownerBalance));
+
+
+  });
+
+  it('the getRemainder() is rejected if not called from owner', async function () {
+    let addr     = ["0x0000000000000000000000000000000000000001"];
+    let balances = [1e18];
+    await this.airdrop.doAirdrop(addr, balances).should.be.fulfilled;
+    await this.airdrop.getRemainder({from:other}).should.be.rejected;
 
   });
 
