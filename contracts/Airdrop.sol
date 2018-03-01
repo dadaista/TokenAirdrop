@@ -6,7 +6,7 @@ import "./Token.sol";
 
 contract Airdrop{
 	Token public token;
-  address owner;
+  address public owner;
   //check this counter to know how many recipients got the Airdrop
   uint256 public counter;
 

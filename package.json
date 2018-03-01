@@ -20,9 +20,10 @@
   },
   "homepage": "https://github.com/dadaista/TokenAirdrop#readme",
   "dependencies": {
-    "truffle-hdwallet-provider": "0.0.3",
     "chai": "^4.0.2",
     "chai-as-promised": "^7.0.0",
-    "chai-bignumber": "^2.0.0"
+    "chai-bignumber": "^2.0.0",
+    "ethjs": "^0.3.3",
+    "truffle-hdwallet-provider": "0.0.3"
   }
 }

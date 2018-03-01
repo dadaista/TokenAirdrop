@@ -1,187 +1,20 @@
+// This is a brute one-by-one token transfer from signer to a list of recipients
+
+const network = "mainnet"; //"ropsten";
+
+// uncomment for mainnet CEL token
+var tokenAddress;
+
+if (network == "mainnet") tokenAddress = "0x662bA51F62591830CD380a7A9bEB232DbD7a92a4";
+if (network == "ropsten") tokenAddress = "0x3ddc4aa7da985d50b657222403b2e7f9fe2f45e2";
 
 
 
 
+var signer;      
 
-  // perform actions
-
-const tokenAddress = "0x3ddc4aa7da985d50b657222403b2e7f9fe2f45e2";
-
-const tokenABI=[
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_spender",
-				"type": "address"
-			},
-			{
-				"name": "_value",
-				"type": "uint256"
-			}
-		],
-		"name": "approve",
-		"outputs": [
-			{
-				"name": "success",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "totalSupply",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_from",
-				"type": "address"
-			},
-			{
-				"name": "_to",
-				"type": "address"
-			},
-			{
-				"name": "_value",
-				"type": "uint256"
-			}
-		],
-		"name": "transferFrom",
-		"outputs": [
-			{
-				"name": "success",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_owner",
-				"type": "address"
-			}
-		],
-		"name": "balanceOf",
-		"outputs": [
-			{
-				"name": "balance",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_to",
-				"type": "address"
-			},
-			{
-				"name": "_value",
-				"type": "uint256"
-			}
-		],
-		"name": "transfer",
-		"outputs": [
-			{
-				"name": "success",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_owner",
-				"type": "address"
-			},
-			{
-				"name": "_spender",
-				"type": "address"
-			}
-		],
-		"name": "allowance",
-		"outputs": [
-			{
-				"name": "remaining",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"name": "_from",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"name": "_to",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "_value",
-				"type": "uint256"
-			}
-		],
-		"name": "Transfer",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"name": "_owner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"name": "_spender",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "_value",
-				"type": "uint256"
-			}
-		],
-		"name": "Approval",
-		"type": "event"
-	}
-];
+if(network == "mainnet") signer = "0x8387A9f497353af8a54269824f2272195C3C2A0f";
+if(network == "ropsten") signer = "0x93f9a1ecb4164c7e42412c3b38b43f1f11f84d8f";
 
 
 
@@ -229,14 +62,18 @@ const amount = [
 ];
 
 
+const promisify = (inner) =>
+  new Promise((resolve, reject) =>
+    inner((err, res) => {
+      if (err) { reject(err) }
+      resolve(res);
+    })
+  );
+
+const getBalance = (account, at) =>
+  promisify(cb => web3.eth.getBalance(account, at, cb));
 
 
-// some constants to manage amounts
-const second     = 1;
-const day        = 86400 * second;
-const week       = day * 7;
-const wei        = 1; //1 wei = 1 wei
-const ether      = 1e18 * wei;
 
  
 
@@ -249,10 +86,18 @@ module.exports = async function(done) {
   let token = await Token.at(tokenAddress);
   console.log(token.address);
 
-  let balance = await token.balanceOf("0x93f9a1ecb4164c7e42412c3b38b43f1f11f84d8f");
-  console.log("balanceOf signer is "+balance);
+  let balance = await token.balanceOf(signer);
+  console.log("Token.balanceOf() signer is "+balance);
 
+  
+  // use getBalance
+  const ETHBalance = await getBalance(signer);
+  console.log("Balance (ETH):" + ETHBalance.div(1e18));
+
+
+  
   for (var i = 0; i < recipients.length; i++) {
+  	console.log("transfer() to:"+ recipients[i]+","+amount[i]);
   	await token.transfer(recipients[i],amount[i]);
     let b = await token.balanceOf(recipients[i]);
     console.log("new balance of "+recipients[i]+" is:"+b);
