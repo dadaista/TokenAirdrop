@@ -1,8 +1,7 @@
 // This is a brute one-by-one token transfer from signer to a list of recipients
 
-const network = "mainnet"; //"ropsten";
+const network = "ropsten"; //"ropsten";
 
-// uncomment for mainnet CEL token
 var tokenAddress;
 
 if (network == "mainnet") tokenAddress = "0x662bA51F62591830CD380a7A9bEB232DbD7a92a4";
@@ -79,30 +78,39 @@ const getBalance = (account, at) =>
 
 const Token = artifacts.require('./build/contracts/Token.sol');
 
-module.exports = async function(done) {
+module.exports =  async function(done) {
   // perform actions
 
 
-  let token = await Token.at(tokenAddress);
-  console.log(token.address);
+  var token = await Token.at(tokenAddress);
+  console.log("**"+token.address);
 
-  let balance = await token.balanceOf(signer);
-  console.log("Token.balanceOf() signer is "+balance);
 
   
-  // use getBalance
+  //use getBalance
   const ETHBalance = await getBalance(signer);
   console.log("Balance (ETH):" + ETHBalance.div(1e18));
 
 
   
   for (var i = 0; i < recipients.length; i++) {
+
+
+    let balance = await token.balanceOf(signer);
+    console.log("Token.balanceOf() signer is "+balance);
+
+    if(balance < amount[i]){
+      done("STOP: tokens are over");
+    }
+
   	console.log("transfer() to:"+ recipients[i]+","+amount[i]);
   	await token.transfer(recipients[i],amount[i]);
-    let b = await token.balanceOf(recipients[i]);
-    console.log("new balance of "+recipients[i]+" is:"+b);
 
-  }
+  };
+    
+    
+
+  
 
   done();
 
